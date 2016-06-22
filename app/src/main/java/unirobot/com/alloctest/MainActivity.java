@@ -1,4 +1,4 @@
-package unirobot.com.lowmemkillertest;
+package unirobot.com.alloctest;
 
 import android.app.ActivityManager;
 import android.support.v7.app.AppCompatActivity;
