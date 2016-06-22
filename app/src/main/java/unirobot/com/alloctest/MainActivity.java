@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -41,13 +42,23 @@ public class MainActivity extends AppCompatActivity {
     private void consumeMemory() {
         Log.d(TAG,"Start allocating large memory.");
         blocks = new ArrayList<>();
-        for (int count = 0;;count++) {
-            allocateBlock();
+        try {
+            for (int count = 0;;count++) {
+                allocateBlock();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Allocation failed.", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void allocateBlock() {
-        blocks.add(ByteBuffer.allocate(BLOCK_SIZE));
+        try {
+            blocks.add(ByteBuffer.allocate(BLOCK_SIZE));
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Allocation failed.", Toast.LENGTH_SHORT).show();
+        }
         Log.d(TAG, getAllocatedMemString() + " allocated.");
         updateMemInfo();
     }
