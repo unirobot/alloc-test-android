@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     final String TAG = getClass().getSimpleName();
@@ -47,16 +48,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void allocateBlock() {
         blocks.add(ByteBuffer.allocate(BLOCK_SIZE));
-        Log.d(TAG, humanReadableByteCount(blocks.size() * BLOCK_SIZE) + " allocated.");
+        Log.d(TAG, getAllocatedMemString() + " allocated.");
         updateMemInfo();
     }
 
+    private String getAllocatedMemString() {
+        return humanReadableByteCount(blocks.size() * BLOCK_SIZE);
+    }
+
     private void updateMemInfo() {
-        ActivityManager actvityManager = (ActivityManager) this.getSystemService( ACTIVITY_SERVICE );
+        ActivityManager activityManager = (ActivityManager) this.getSystemService( ACTIVITY_SERVICE );
         ActivityManager.MemoryInfo mInfo = new ActivityManager.MemoryInfo ();
-        actvityManager.getMemoryInfo( mInfo );
+        activityManager.getMemoryInfo( mInfo );
 
         String memoryInfoString = "Memory:\n";
+        memoryInfoString += " - allocated: " + getAllocatedMemString() + "\n";
+        memoryInfoString += " - mem class: " + activityManager.getMemoryClass() + " MB\n";
+        memoryInfoString += " - large mem class: " + activityManager.getLargeMemoryClass() + " MB\n";
         memoryInfoString += " - minfo.availMem: " + humanReadableByteCount(mInfo.availMem) + "\n";
         memoryInfoString += " - minfo.lowMemory: " + mInfo.lowMemory + "\n";
         memoryInfoString += " - minfo.threshold: " + humanReadableByteCount(mInfo.threshold) + "\n";
@@ -74,6 +82,6 @@ public class MainActivity extends AppCompatActivity {
         if (bytes < unit) return bytes + " B";
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
-        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+        return String.format(Locale.getDefault(), "%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 }
